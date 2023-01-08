@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Form page</title>
+</head>
+<body>
+{{range $v := .Errors}}
+<ul>
+    <li>{{$v}}</li>
+</ul>
+{{end}}
+{{if .Sended}}
+    <div>Message envoyé</div>
+    <div>
+        <ul>
+            <li><strong>Name</strong> {{ .Data.Name }}</li>
+            <li><strong>Email</strong> {{ .Data.Email }}</li>
+            <li><strong>Message</strong> {{ .Data.Message }}</li>
+        </ul>
+    </div>
+    <div><a href="/">Go to home</a></div>
+{{else}}
+<form action="/contact" method="POST">
+    <label for="name">Name</label><input id="name" type="text" name="name" value="{{if .Data.Name}}{{.Data.Name}}{{end}}"/>
+    <label for="email">Email</label><input id="email" type="text" name="email" value="{{if .Data.Email}}{{.Data.Email}}{{end}}"/>
+    <label for="message">Message</label><input id="message" type="text" name="message" value="{{if .Data.Message}}{{.Data.Message}}{{end}}"/>
+    <input type="submit" value="submit"/>
+</form>
+{{end}}
+</body>
+</html>

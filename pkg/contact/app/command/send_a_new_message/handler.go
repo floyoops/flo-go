@@ -1,12 +1,25 @@
 package send_a_new_message
 
-type handler struct {
+import (
+	"fmt"
+	"github.com/floyoops/flo-go/pkg/contact/domain/model"
+)
+
+type Handler struct {
 }
 
-func NewHandler() *handler {
-	return &handler{}
+func NewHandler() *Handler {
+	return &Handler{}
 }
 
-func (h *handler) Handle(command Command) bool {
+func (h *Handler) Handle(command Command) bool {
+	contact := model.NewContact(
+		command.Name,
+		command.Email,
+		command.Message,
+	)
+
+	fmt.Printf("Message for %s handled", contact.Email)
+
 	return true
 }

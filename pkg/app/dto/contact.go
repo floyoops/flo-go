@@ -1,0 +1,71 @@
+package dto
+
+import (
+	"github.com/go-playground/validator/v10"
+)
+
+const (
+	required string = "required"
+	email    string = "email"
+	min      string = "min"
+	max      string = "max"
+)
+
+const (
+	ValidationErrContactName    = "Please enter a name with 3 to 50 characters."
+	ValidationErrContactEmail   = "Please enter a email."
+	ValidationErrContactMessage = "Please enter a name with 3 to 1000 characters."
+)
+
+type ContactDto struct {
+	Name    string `validate:"required,min=3,max=50"`
+	Email   string `validate:"required,email"`
+	Message string `validate:"required,min=3,max=1000"`
+}
+
+func NewContactDto() *ContactDto {
+	return &ContactDto{}
+}
+
+func (c *ContactDto) Validate() map[string]string {
+	return validateDto(c)
+}
+
+func validateDto(c interface{}) map[string]string {
+	err := validator.New().Struct(c)
+	if err == nil {
+		return nil
+	}
+
+	errors := err.(validator.ValidationErrors)
+	if len(errors) == 0 {
+		return nil
+	}
+
+	return createErrorMessages(errors)
+}
+
+func createErrorMessages(errors validator.ValidationErrors) map[string]string {
+	result := make(map[string]string)
+	for i := range errors {
+		switch errors[i].StructField() {
+		case "Name":
+			switch errors[i].Tag() {
+			case required, min, max:
+				result["name"] = ValidationErrContactName
+			}
+		case "Email":
+			switch errors[i].Tag() {
+			case required, email:
+				result["email"] = ValidationErrContactEmail
+			}
+		case "Message":
+			switch errors[i].Tag() {
+			case required, min, max:
+				result["message"] = ValidationErrContactMessage
+			}
+		}
+
+	}
+	return result
+}

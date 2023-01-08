@@ -1,10 +1,14 @@
 package controller
 
 import (
+	"github.com/floyoops/flo-go/pkg/app/dto"
+	"github.com/floyoops/flo-go/pkg/app/view"
 	"github.com/floyoops/flo-go/pkg/contact/app/command/send_a_new_message"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
+
+const contactPage string = "contact.page.html"
 
 type ContactController interface {
 	GetContact(c echo.Context) error
@@ -19,18 +23,32 @@ func NewContactController() ContactController {
 }
 
 func (controller *contactController) GetContact(c echo.Context) error {
-	return c.Render(http.StatusOK, "contact.html", nil)
+	return c.Render(http.StatusOK, contactPage, nil)
 }
 
 func (controller *contactController) PostContact(c echo.Context) error {
+	contactDto := dto.NewContactDto()
+	contactDto.Name = c.FormValue("name")
+	contactDto.Email = c.FormValue("email")
+	contactDto.Message = c.FormValue("message")
+
+	if errors := contactDto.Validate(); errors != nil {
+		dataView := view.NewContactView(contactDto, &errors, false)
+		return c.Render(http.StatusBadRequest, contactPage, dataView)
+	}
+
 	result := send_a_new_message.NewHandler().Handle(send_a_new_message.Command{
-		Name:    "a",
-		Email:   "b",
-		Message: "c",
+		Name:    contactDto.Name,
+		Email:   contactDto.Email,
+		Message: contactDto.Message,
 	})
 
 	if result == false {
-		return c.JSON(http.StatusInternalServerError, "error on send message")
+		errors := map[string]string{"error": "une erreur est survenue veuillez réessayer ultérieurement"}
+		dataView := view.NewContactView(contactDto, &errors, false)
+		return c.Render(http.StatusInternalServerError, contactPage, dataView)
 	}
-	return c.JSON(http.StatusOK, "ok")
+
+	dataView := view.NewContactView(contactDto, &map[string]string{}, true)
+	return c.Render(http.StatusCreated, contactPage, dataView)
 }
