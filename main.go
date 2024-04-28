@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/floyoops/flo-go/pkg/app"
 	"github.com/floyoops/flo-go/pkg/app/render"
 	"github.com/floyoops/flo-go/pkg/app/router"
 	"github.com/labstack/echo/v4"
@@ -17,7 +18,7 @@ func main() {
 		Templates: template.Must(template.ParseGlob(rootPath + "/public/*.html")),
 	}
 	e.Renderer = renderer
-	router.Init(e)
+	router.Init(app.NewContainer(), e)
 	if err := e.Start(":8080"); err != nil {
 		fmt.Printf("Error on start server %s", err.Error())
 	}
