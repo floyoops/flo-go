@@ -6,10 +6,11 @@ import (
 )
 
 type Handler struct {
+	mailer mailer.Mailer
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(mailer mailer.Mailer) *Handler {
+	return &Handler{mailer}
 }
 
 func (h *Handler) Handle(command Command) bool {
