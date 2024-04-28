@@ -16,7 +16,7 @@ func NewHomeController() HomeController {
 	return &homeController{}
 }
 
-func (controller *homeController) GetHome(c echo.Context) error {
+func (ctl *homeController) GetHome(c echo.Context) error {
 	return c.Render(http.StatusOK, "home.page.html", map[string]interface{}{
 		"title": "HomePage!",
 	})

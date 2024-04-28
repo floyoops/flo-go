@@ -23,11 +23,11 @@ func NewContactController(sendNewMessageCommandHandler *send_a_new_message.Handl
 	return &contactController{sendNewMessageCommandHandler: sendNewMessageCommandHandler}
 }
 
-func (controller *contactController) GetContact(c echo.Context) error {
+func (ctl *contactController) GetContact(c echo.Context) error {
 	return c.Render(http.StatusOK, contactPage, nil)
 }
 
-func (controller *contactController) PostContact(c echo.Context) error {
+func (ctl *contactController) PostContact(c echo.Context) error {
 	contactDto := dto.NewContactDto()
 	contactDto.Name = c.FormValue("name")
 	contactDto.Email = c.FormValue("email")
@@ -38,7 +38,7 @@ func (controller *contactController) PostContact(c echo.Context) error {
 		return c.Render(http.StatusBadRequest, contactPage, dataView)
 	}
 
-	result := controller.sendNewMessageCommandHandler.Handle(send_a_new_message.Command{
+	result := ctl.sendNewMessageCommandHandler.Handle(send_a_new_message.Command{
 		Name:    contactDto.Name,
 		Email:   contactDto.Email,
 		Message: contactDto.Message,
