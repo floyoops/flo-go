@@ -11,6 +11,7 @@ import (
 
 func main() {
 	rootPath, _ := os.Getwd()
+	fmt.Printf("rootPath by os.Getwd(): %s", rootPath)
 	e := echo.New()
 	renderer := &render.TemplateRenderer{
 		Templates: template.Must(template.ParseGlob(rootPath + "/public/*.html")),

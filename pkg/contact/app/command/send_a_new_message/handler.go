@@ -1,7 +1,7 @@
 package send_a_new_message
 
 import (
-	"fmt"
+	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/pkg/contact/domain/model"
 )
 
@@ -19,7 +19,10 @@ func (h *Handler) Handle(command Command) bool {
 		command.Message,
 	)
 
-	fmt.Printf("Message for %s handled", contact.Email)
+	_, err := mailer.NewMailer().Send(contact.Email, contact.Message)
+	if err != nil {
+		return false
+	}
 
 	return true
 }
