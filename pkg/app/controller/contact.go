@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"github.com/floyoops/flo-go/pkg/app"
 	"github.com/floyoops/flo-go/pkg/app/dto"
 	"github.com/floyoops/flo-go/pkg/app/view"
 	"github.com/floyoops/flo-go/pkg/contact/app/command/send_a_new_message"
-	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -37,8 +37,9 @@ func (controller *contactController) PostContact(c echo.Context) error {
 		dataView := view.NewContactView(contactDto, &errors, false)
 		return c.Render(http.StatusBadRequest, contactPage, dataView)
 	}
+	container := app.NewContainer()
 
-	result := send_a_new_message.NewHandler(mailer.NewMailer()).Handle(send_a_new_message.Command{
+	result := container.SendNewMessageCommandHandler.Handle(send_a_new_message.Command{
 		Name:    contactDto.Name,
 		Email:   contactDto.Email,
 		Message: contactDto.Message,
