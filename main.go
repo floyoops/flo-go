@@ -18,7 +18,7 @@ func main() {
 		Templates: template.Must(template.ParseGlob(rootPath + "/public/*.html")),
 	}
 	e.Renderer = renderer
-	router.Init(app.NewContainer(), e)
+	router.NewRouter(e, app.NewContainer()).Build()
 	if err := e.Start(":8080"); err != nil {
 		fmt.Printf("Error on start server %s", err.Error())
 	}
