@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/floyoops/flo-go/pkg/app/dto"
 	"github.com/floyoops/flo-go/pkg/app/view"
-	"github.com/floyoops/flo-go/pkg/contact/app/command/send_a_new_message"
+	send_a_new_message2 "github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -16,10 +16,10 @@ type ContactController interface {
 }
 
 type contactController struct {
-	sendNewMessageCommandHandler *send_a_new_message.Handler
+	sendNewMessageCommandHandler *send_a_new_message2.Handler
 }
 
-func NewContactController(sendNewMessageCommandHandler *send_a_new_message.Handler) ContactController {
+func NewContactController(sendNewMessageCommandHandler *send_a_new_message2.Handler) ContactController {
 	return &contactController{sendNewMessageCommandHandler: sendNewMessageCommandHandler}
 }
 
@@ -38,7 +38,7 @@ func (ctl *contactController) PostContact(c echo.Context) error {
 		return c.Render(http.StatusBadRequest, contactPage, dataView)
 	}
 
-	result := ctl.sendNewMessageCommandHandler.Handle(send_a_new_message.Command{
+	result := ctl.sendNewMessageCommandHandler.Handle(send_a_new_message2.Command{
 		Name:    contactDto.Name,
 		Email:   contactDto.Email,
 		Message: contactDto.Message,

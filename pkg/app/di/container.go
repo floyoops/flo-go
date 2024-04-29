@@ -2,7 +2,7 @@ package di
 
 import (
 	"github.com/floyoops/flo-go/pkg/app/controller"
-	"github.com/floyoops/flo-go/pkg/contact/app/command/send_a_new_message"
+	"github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
 )
 
