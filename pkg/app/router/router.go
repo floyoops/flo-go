@@ -1,17 +1,17 @@
 package router
 
 import (
-	"github.com/floyoops/flo-go/pkg/app"
 	"github.com/floyoops/flo-go/pkg/app/controller"
+	"github.com/floyoops/flo-go/pkg/app/di"
 	"github.com/labstack/echo/v4"
 )
 
 type Router struct {
 	e  *echo.Echo
-	di *app.Container
+	di *di.Container
 }
 
-func NewRouter(e *echo.Echo, di *app.Container) *Router {
+func NewRouter(e *echo.Echo, di *di.Container) *Router {
 	return &Router{e: e, di: di}
 }
 
