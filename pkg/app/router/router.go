@@ -7,17 +7,15 @@ import (
 )
 
 func Init(di *app.Container, e *echo.Echo) {
-	setHomeController(e)
+	setHomeController(di, e)
 	setContactController(di, e)
 }
 
-func setHomeController(e *echo.Echo) {
-	home := controller.NewHomeController()
-	e.GET(controller.HOME, func(c echo.Context) error { return home.GetHome(c) })
+func setHomeController(di *app.Container, e *echo.Echo) {
+	e.GET(controller.HOME, func(c echo.Context) error { return di.HomeController.GetHome(c) })
 }
 
 func setContactController(di *app.Container, e *echo.Echo) {
-	contact := controller.NewContactController(di.SendNewMessageCommandHandler)
-	e.GET(controller.CONTACT, func(c echo.Context) error { return contact.GetContact(c) })
-	e.POST(controller.CONTACT, func(c echo.Context) error { return contact.PostContact(c) })
+	e.GET(controller.CONTACT, func(c echo.Context) error { return di.ContactController.GetContact(c) })
+	e.POST(controller.CONTACT, func(c echo.Context) error { return di.ContactController.PostContact(c) })
 }
