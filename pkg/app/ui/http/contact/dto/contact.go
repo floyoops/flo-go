@@ -7,8 +7,8 @@ import (
 const (
 	required string = "required"
 	email    string = "email"
-	min      string = "min"
-	max      string = "max"
+	mini     string = "min"
+	maxi     string = "max"
 )
 
 const (
@@ -51,7 +51,7 @@ func createErrorMessages(errors validator.ValidationErrors) map[string]string {
 		switch errors[i].StructField() {
 		case "Name":
 			switch errors[i].Tag() {
-			case required, min, max:
+			case required, mini, maxi:
 				result["name"] = ValidationErrContactName
 			}
 		case "Email":
@@ -61,7 +61,7 @@ func createErrorMessages(errors validator.ValidationErrors) map[string]string {
 			}
 		case "Message":
 			switch errors[i].Tag() {
-			case required, min, max:
+			case required, mini, maxi:
 				result["message"] = ValidationErrContactMessage
 			}
 		}
