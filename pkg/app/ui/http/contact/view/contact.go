@@ -1,7 +1,7 @@
 package view
 
 import (
-	. "github.com/floyoops/flo-go/pkg/app/dto"
+	. "github.com/floyoops/flo-go/pkg/app/ui/http/contact/dto"
 )
 
 type ContactView struct {

@@ -1,9 +1,13 @@
 package router
 
 import (
-	"github.com/floyoops/flo-go/pkg/app/controller"
 	"github.com/floyoops/flo-go/pkg/app/di"
 	"github.com/labstack/echo/v4"
+)
+
+const (
+	HOME    = "/"
+	CONTACT = "/contact"
 )
 
 type Router struct {
@@ -16,7 +20,7 @@ func NewRouter(e *echo.Echo, di *di.Container) *Router {
 }
 
 func (r *Router) Build() {
-	r.e.GET(controller.HOME, func(c echo.Context) error { return r.di.HomeController.GetHome(c) })
-	r.e.GET(controller.CONTACT, func(c echo.Context) error { return r.di.ContactController.GetContact(c) })
-	r.e.POST(controller.CONTACT, func(c echo.Context) error { return r.di.ContactController.PostContact(c) })
+	r.e.GET(HOME, func(c echo.Context) error { return r.di.HomeController.GetHome(c) })
+	r.e.GET(CONTACT, func(c echo.Context) error { return r.di.ContactController.GetContact(c) })
+	r.e.POST(CONTACT, func(c echo.Context) error { return r.di.ContactController.PostContact(c) })
 }
