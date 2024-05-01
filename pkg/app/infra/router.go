@@ -1,7 +1,6 @@
-package router
+package infra
 
 import (
-	"github.com/floyoops/flo-go/pkg/app/di"
 	"github.com/labstack/echo/v4"
 )
 
@@ -12,10 +11,10 @@ const (
 
 type Router struct {
 	e  *echo.Echo
-	di *di.Container
+	di *Container
 }
 
-func NewRouter(e *echo.Echo, di *di.Container) *Router {
+func NewRouter(e *echo.Echo, di *Container) *Router {
 	return &Router{e: e, di: di}
 }
 

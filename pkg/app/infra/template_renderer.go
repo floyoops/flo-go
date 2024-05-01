@@ -1,4 +1,4 @@
-package render
+package infra
 
 import (
 	"github.com/labstack/echo/v4"
