@@ -22,7 +22,7 @@ func NewApp() *App {
 	}
 	e := echo.New()
 	e.Renderer = renderer
-	router.NewRouter(e, di.NewContainer()).Build()
+	router.NewRouter(e, di.NewContainer(rootPath)).Build()
 	return &App{echo: e}
 }
 
