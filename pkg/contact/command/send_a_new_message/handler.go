@@ -20,7 +20,7 @@ func (h *Handler) Handle(command Command) bool {
 		command.Message,
 	)
 
-	_, err := mailer.NewMailer().Send(contact.Email, contact.Message)
+	_, err := h.mailer.Send(contact.Email, contact.Message)
 	if err != nil {
 		return false
 	}

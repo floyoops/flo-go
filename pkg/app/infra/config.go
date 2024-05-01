@@ -9,6 +9,10 @@ type Config struct {
 	DatabaseName     string
 	DatabaseUser     string
 	DatabasePassword string
+	SmtpHost         string
+	SmtpPort         string
+	SmtpUsername     string
+	SmtpPassword     string
 }
 
 func NewConfig(rootPath string) *Config {
@@ -19,6 +23,10 @@ func NewConfig(rootPath string) *Config {
 		DatabaseName:     getEnv("DATABASE_NAME", "flogo"),
 		DatabaseUser:     getEnv("DATABASE_USER", "root"),
 		DatabasePassword: getEnv("DATABASE_PASSWORD", "toor"),
+		SmtpHost:         getEnv("SMTP_HOST", "localhost"),
+		SmtpPort:         getEnv("SMTP_PORT", "25"),
+		SmtpUsername:     getEnv("SMTP_USER", "flogo"),
+		SmtpPassword:     getEnv("SMTP_PASSWORD", "toor"),
 	}
 }
 
