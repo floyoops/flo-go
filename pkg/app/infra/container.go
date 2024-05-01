@@ -18,7 +18,7 @@ type Container struct {
 func NewContainer(rootPath string) *Container {
 	newConfig := NewConfig(rootPath)
 	newMailer := NewMailer(newConfig.SmtpHost, newConfig.SmtpPort, newConfig.SmtpUsername, newConfig.SmtpPassword)
-	sendANewsMessageCommandHandler := send_a_new_message.NewHandler(newMailer)
+	sendANewsMessageCommandHandler := send_a_new_message.NewHandler(newMailer, newConfig.ContactEmailApp)
 	homeController := home.NewHomeController()
 	contactController := contact.NewContactController(sendANewsMessageCommandHandler)
 	return &Container{

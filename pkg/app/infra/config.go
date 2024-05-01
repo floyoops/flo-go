@@ -13,6 +13,7 @@ type Config struct {
 	SmtpPort         string
 	SmtpUsername     string
 	SmtpPassword     string
+	ContactEmailApp  string
 }
 
 func NewConfig(rootPath string) *Config {
@@ -24,9 +25,10 @@ func NewConfig(rootPath string) *Config {
 		DatabaseUser:     getEnv("DATABASE_USER", "root"),
 		DatabasePassword: getEnv("DATABASE_PASSWORD", "toor"),
 		SmtpHost:         getEnv("SMTP_HOST", "localhost"),
-		SmtpPort:         getEnv("SMTP_PORT", "25"),
+		SmtpPort:         getEnv("SMTP_PORT", "1025"),
 		SmtpUsername:     getEnv("SMTP_USER", "flogo"),
 		SmtpPassword:     getEnv("SMTP_PASSWORD", "toor"),
+		ContactEmailApp:  getEnv("CONTACT_EMAIL_APP", "flogo@flogo.com"),
 	}
 }
 
