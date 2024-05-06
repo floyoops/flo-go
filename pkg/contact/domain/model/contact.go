@@ -7,8 +7,8 @@ type Contact struct {
 	Name      string
 	Email     string
 	Message   string
-	CreatedAt core.TimeImmutable
-	UpdatedAt core.TimeImmutable
+	CreatedAt core.UtcTimeImmutable
+	UpdatedAt core.UtcTimeImmutable
 }
 
 func NewContact(uuid core.Identifier, name string, email string, message string) *Contact {
@@ -17,7 +17,7 @@ func NewContact(uuid core.Identifier, name string, email string, message string)
 		Name:      name,
 		Email:     email,
 		Message:   message,
-		CreatedAt: core.NewTimeImmutableNow(),
-		UpdatedAt: core.NewTimeImmutableNow(),
+		CreatedAt: core.NewUtcTimeImmutableNow(),
+		UpdatedAt: core.NewUtcTimeImmutableNow(),
 	}
 }

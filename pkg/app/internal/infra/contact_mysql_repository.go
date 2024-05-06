@@ -35,8 +35,8 @@ func (c *ContactMysqlRepository) Create(contact *model.Contact) error {
 			"name":       contact.Name,
 			"email":      contact.Email,
 			"message":    contact.Message,
-			"created_at": contact.CreatedAt.ToMysqlDateTimeUTC(),
-			"updated_at": contact.UpdatedAt.ToMysqlDateTimeUTC(),
+			"created_at": contact.CreatedAt.ToMysqlDateTime(),
+			"updated_at": contact.UpdatedAt.ToMysqlDateTime(),
 		},
 	)
 	if err != nil {
