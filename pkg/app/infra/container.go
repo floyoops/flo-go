@@ -16,13 +16,16 @@ type Container struct {
 }
 
 func NewContainer(rootPath string) *Container {
-	newConfig := NewConfig(rootPath)
-	newMailer := NewMailer(newConfig.SmtpHost, newConfig.SmtpPort, newConfig.SmtpUsername, newConfig.SmtpPassword)
-	sendANewsMessageCommandHandler := send_a_new_message.NewHandler(newMailer, newConfig.ContactEmailApp)
+	config := NewConfig(rootPath)
+	databaseDns := config.DatabaseUser + ":" + config.DatabasePassword + "@tcp(" + config.DatabaseHost + ":" + config.DatabasePort + ")/" + config.DatabaseName
+	database := NewDatabase(databaseDns)
+	contactRepository := NewContactMysqlRepository(database)
+	newMailer := NewMailer(config.SmtpHost, config.SmtpPort, config.SmtpUsername, config.SmtpPassword)
+	sendANewsMessageCommandHandler := send_a_new_message.NewHandler(contactRepository, newMailer, config.ContactEmailApp)
 	homeController := home.NewHomeController()
 	contactController := contact.NewContactController(sendANewsMessageCommandHandler)
 	return &Container{
-		Config:                       newConfig,
+		Config:                       config,
 		mailer:                       newMailer,
 		SendNewMessageCommandHandler: sendANewsMessageCommandHandler,
 		ContactController:            contactController,

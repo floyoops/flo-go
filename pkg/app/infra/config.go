@@ -1,6 +1,8 @@
 package infra
 
-import "os"
+import (
+	"os"
+)
 
 type Config struct {
 	RootPath         string
@@ -20,7 +22,7 @@ func NewConfig(rootPath string) *Config {
 	return &Config{
 		RootPath:         rootPath,
 		DatabaseHost:     getEnv("DATABASE_HOST", "localhost"),
-		DatabasePort:     getEnv("DATABASE_PORT", "3006"),
+		DatabasePort:     getEnv("DATABASE_PORT", "3306"),
 		DatabaseName:     getEnv("DATABASE_NAME", "flogo"),
 		DatabaseUser:     getEnv("DATABASE_USER", "root"),
 		DatabasePassword: getEnv("DATABASE_PASSWORD", "toor"),

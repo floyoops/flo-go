@@ -4,7 +4,9 @@ import (
 	"github.com/floyoops/flo-go/pkg/app/ui/http/contact/dto"
 	"github.com/floyoops/flo-go/pkg/app/ui/http/contact/view"
 	send_a_new_message2 "github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
+	"github.com/floyoops/flo-go/pkg/core"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"net/http"
 )
 
@@ -24,7 +26,7 @@ func NewContactController(sendNewMessageCommandHandler *send_a_new_message2.Hand
 }
 
 func (ctl *contactController) GetContact(c echo.Context) error {
-	return c.Render(http.StatusOK, contactPage, nil)
+	return c.Render(http.StatusOK, contactPage, map[string]interface{}{"NewId": core.NewIdentifier().String()})
 }
 
 func (ctl *contactController) PostContact(c echo.Context) error {
@@ -38,11 +40,15 @@ func (ctl *contactController) PostContact(c echo.Context) error {
 		return c.Render(http.StatusBadRequest, contactPage, dataView)
 	}
 
-	result := ctl.sendNewMessageCommandHandler.Handle(send_a_new_message2.Command{
+	result, err := ctl.sendNewMessageCommandHandler.Handle(send_a_new_message2.Command{
 		Name:    contactDto.Name,
 		Email:   contactDto.Email,
 		Message: contactDto.Message,
 	})
+
+	if err != nil {
+		log.Errorf(err.Error())
+	}
 
 	if result == false {
 		errors := map[string]string{"error": "une erreur est survenue veuillez réessayer ultérieurement"}

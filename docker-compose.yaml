@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  db:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: toor
+
   mailpit:
     image: axllent/mailpit
     container_name: mailpit
