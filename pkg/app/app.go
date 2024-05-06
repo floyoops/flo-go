@@ -3,7 +3,7 @@ package app
 import (
 	"errors"
 	"fmt"
-	"github.com/floyoops/flo-go/pkg/app/infra"
+	appInfra "github.com/floyoops/flo-go/pkg/app/internal/infra"
 	"github.com/labstack/echo/v4"
 	"html/template"
 	"os"
@@ -15,12 +15,12 @@ type App struct {
 
 func NewApp() *App {
 	rootPath, _ := os.Getwd()
-	renderer := &infra.TemplateRenderer{
+	renderer := &appInfra.TemplateRenderer{
 		Templates: template.Must(template.ParseGlob(rootPath + "/public/*.html")),
 	}
 	e := echo.New()
 	e.Renderer = renderer
-	infra.NewRouter(e, infra.NewContainer(rootPath)).Build()
+	appInfra.NewRouter(e, appInfra.NewContainer(rootPath)).Build()
 	return &App{echo: e}
 }
 

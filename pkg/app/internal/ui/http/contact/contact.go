@@ -1,8 +1,8 @@
 package contact
 
 import (
-	"github.com/floyoops/flo-go/pkg/app/ui/http/contact/dto"
-	"github.com/floyoops/flo-go/pkg/app/ui/http/contact/view"
+	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/contact/dto"
+	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/contact/view"
 	send_a_new_message2 "github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/pkg/core"
 	"github.com/labstack/echo/v4"

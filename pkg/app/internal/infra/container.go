@@ -1,8 +1,8 @@
 package infra
 
 import (
-	"github.com/floyoops/flo-go/pkg/app/ui/http/contact"
-	"github.com/floyoops/flo-go/pkg/app/ui/http/home"
+	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/contact"
+	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/home"
 	"github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
 )
