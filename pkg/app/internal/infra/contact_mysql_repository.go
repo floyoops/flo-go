@@ -33,7 +33,7 @@ func (c *ContactMysqlRepository) Create(contact *model.Contact) error {
 		map[string]interface{}{
 			"uuid":       contact.Uuid.String(),
 			"name":       contact.Name,
-			"email":      contact.Email,
+			"email":      contact.Email.String(),
 			"message":    contact.Message,
 			"created_at": contact.CreatedAt.ToMysqlDateTime(),
 			"updated_at": contact.UpdatedAt.ToMysqlDateTime(),

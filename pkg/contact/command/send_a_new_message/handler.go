@@ -11,10 +11,10 @@ import (
 type Handler struct {
 	contactRepository repository.ContactRepository
 	mailer            mailer.Mailer
-	contactEmailApp   string
+	contactEmailApp   *model.Email
 }
 
-func NewHandler(contactRepository repository.ContactRepository, mailer mailer.Mailer, contactFromEmail string) *Handler {
+func NewHandler(contactRepository repository.ContactRepository, mailer mailer.Mailer, contactFromEmail *model.Email) *Handler {
 	return &Handler{contactRepository, mailer, contactFromEmail}
 }
 
@@ -31,7 +31,7 @@ func (h *Handler) Handle(command Command) (bool, error) {
 		return false, err2
 	}
 
-	to := []string{h.contactEmailApp}
+	to := model.NewEmailList([]*model.Email{h.contactEmailApp})
 	subject := "App flo-go new message from " + contact.Name
 	body := fmt.Sprintf("name: %s\nemail: %s\nmessage: %s", contact.Name, contact.Email, contact.Message)
 	_, err := h.mailer.Send(h.contactEmailApp, to, subject, body)

@@ -4,6 +4,7 @@ import (
 	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/contact/dto"
 	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/contact/view"
 	send_a_new_message2 "github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
+	"github.com/floyoops/flo-go/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/pkg/core"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -40,9 +41,14 @@ func (ctl *contactController) PostContact(c echo.Context) error {
 		return c.Render(http.StatusBadRequest, contactPage, dataView)
 	}
 
+	email, err := model.NewEmail(contactDto.Email)
+	if err != nil {
+		log.Errorf(err.Error())
+	}
+
 	result, err := ctl.sendNewMessageCommandHandler.Handle(send_a_new_message2.Command{
 		Name:    contactDto.Name,
-		Email:   contactDto.Email,
+		Email:   email,
 		Message: contactDto.Message,
 	})
 

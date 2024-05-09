@@ -1,6 +1,8 @@
 package infra
 
 import (
+	"github.com/floyoops/flo-go/pkg/contact/domain/model"
+	"github.com/labstack/gommon/log"
 	"os"
 )
 
@@ -15,10 +17,15 @@ type Config struct {
 	SmtpPort         string
 	SmtpUsername     string
 	SmtpPassword     string
-	ContactEmailApp  string
+	ContactEmailApp  *model.Email
 }
 
 func NewConfig(rootPath string) *Config {
+	contactEmailApp, err := model.NewEmail(getEnv("CONTACT_EMAIL_APP", "flogo@flogo.com"))
+	if err != nil {
+		log.Fatalf("error for key env CONTACT_EMAIL_APP: %v", err)
+	}
+
 	return &Config{
 		RootPath:         rootPath,
 		DatabaseHost:     getEnv("DATABASE_HOST", "localhost"),
@@ -30,7 +37,7 @@ func NewConfig(rootPath string) *Config {
 		SmtpPort:         getEnv("SMTP_PORT", "1025"),
 		SmtpUsername:     getEnv("SMTP_USER", "flogo"),
 		SmtpPassword:     getEnv("SMTP_PASSWORD", "toor"),
-		ContactEmailApp:  getEnv("CONTACT_EMAIL_APP", "flogo@flogo.com"),
+		ContactEmailApp:  contactEmailApp,
 	}
 }
 
