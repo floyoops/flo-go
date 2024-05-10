@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/pkg/contact/domain/model"
+	"github.com/labstack/gommon/log"
 	"net/smtp"
 	"strconv"
 )
@@ -19,7 +20,7 @@ func NewMailer(Host, Port, User, Pass string) mailer.Mailer {
 	return &Mailer{Host: Host, Port: Port, User: User, Pass: Pass}
 }
 
-func (m *Mailer) Send(from *model.Email, to *model.EmailList, subject string, body string) (bool, error) {
+func (m *Mailer) Send(from *model.Email, to *model.EmailList, subject string, body string) error {
 
 	auth := smtp.PlainAuth("", m.User, m.Pass, m.Host)
 	msg := []byte("To: " + to.ToArray()[0].String() + "\r\n" +
@@ -30,10 +31,9 @@ func (m *Mailer) Send(from *model.Email, to *model.EmailList, subject string, bo
 	port, _ := strconv.Atoi(m.Port)
 	err := smtp.SendMail(m.Host+":"+fmt.Sprintf("%d", port), auth, from.String(), to.ToArrayString(), msg)
 	if err != nil {
-		fmt.Println("Erreur lors de l'envoi de l'e-mail:", err)
-		return false, err
+		return fmt.Errorf("%s, %w", err, mailer.ErrOnSend)
 	}
 
-	fmt.Printf("Email from %s sended", from)
-	return true, nil
+	log.Info(fmt.Sprintf("Email from %s sended", from))
+	return nil
 }

@@ -1,6 +1,10 @@
 package infra
 
-import "github.com/floyoops/flo-go/pkg/contact/domain/model"
+import (
+	"fmt"
+	"github.com/floyoops/flo-go/pkg/contact/domain/model"
+	"github.com/floyoops/flo-go/pkg/contact/repository"
+)
 
 type ContactMysqlRepository struct {
 	db *Database
@@ -27,9 +31,10 @@ func (r *ContactMysqlRepository) InitSchema() {
 }
 
 func (c *ContactMysqlRepository) Create(contact *model.Contact) error {
+	query := "INSERT INTO contact (uuid, name, email, message, created_at, updated_at) VALUES (:uuid, :name, :email, :message, :created_at, :updated_at)"
 	tx := c.db.Connection.MustBegin()
 	_, err := tx.NamedExec(
-		"INSERT INTO contact (uuid, name, email, message, created_at, updated_at) VALUES (:uuid, :name, :email, :message, :created_at, :updated_at)",
+		query,
 		map[string]interface{}{
 			"uuid":       contact.Uuid.String(),
 			"name":       contact.Name,
@@ -39,8 +44,12 @@ func (c *ContactMysqlRepository) Create(contact *model.Contact) error {
 			"updated_at": contact.UpdatedAt.ToMysqlDateTime(),
 		},
 	)
+
 	if err != nil {
-		return err
+		errRollback := tx.Rollback()
+		isRollback := errRollback == nil
+
+		return fmt.Errorf("query: %s, isRollback: %t, %w", query, isRollback, repository.ErrOnSaveContact)
 	}
 	return tx.Commit()
 }

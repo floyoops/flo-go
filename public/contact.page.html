@@ -25,7 +25,6 @@
     <label for="name">Name</label><input id="name" type="text" name="name" value="{{if .Data.Name}}{{.Data.Name}}{{end}}"/>
     <label for="email">Email</label><input id="email" type="text" name="email" value="{{if .Data.Email}}{{.Data.Email}}{{end}}"/>
     <label for="message">Message</label><input id="message" type="text" name="message" value="{{if .Data.Message}}{{.Data.Message}}{{end}}"/>
-    <input type="hidden" name="new_id" value="{{ .NewId }}">
     <input type="submit" value="submit"/>
 </form>
 {{end}}

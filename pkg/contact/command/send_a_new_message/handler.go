@@ -18,7 +18,7 @@ func NewHandler(contactRepository repository.ContactRepository, mailer mailer.Ma
 	return &Handler{contactRepository, mailer, contactFromEmail}
 }
 
-func (h *Handler) Handle(command Command) (bool, error) {
+func (h *Handler) Handle(command Command) error {
 	contact := model.NewContact(
 		core.NewIdentifier(),
 		command.Name,
@@ -26,18 +26,18 @@ func (h *Handler) Handle(command Command) (bool, error) {
 		command.Message,
 	)
 
-	err2 := h.contactRepository.Create(contact)
-	if err2 != nil {
-		return false, err2
+	errRepo := h.contactRepository.Create(contact)
+	if errRepo != nil {
+		return errRepo
 	}
 
 	to := model.NewEmailList([]*model.Email{h.contactEmailApp})
 	subject := "App flo-go new message from " + contact.Name
 	body := fmt.Sprintf("name: %s\nemail: %s\nmessage: %s", contact.Name, contact.Email, contact.Message)
-	_, err := h.mailer.Send(h.contactEmailApp, to, subject, body)
+	err := h.mailer.Send(h.contactEmailApp, to, subject, body)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return nil
 }
