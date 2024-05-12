@@ -66,7 +66,7 @@ func (ctl *contactController) PostContact(c echo.Context) error {
 			errorsView = map[string]string{"error": "une erreur est survenue veuillez réessayer ultérieurement"}
 		}
 		dataView := view.NewContactView(contactDto, &errorsView, false)
-		return c.Render(http.StatusCreated, contactPage, dataView)
+		return c.Render(http.StatusInternalServerError, contactPage, dataView)
 	}
 
 	dataView := view.NewContactView(contactDto, &map[string]string{}, true)
