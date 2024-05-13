@@ -1,10 +1,13 @@
 {
   "name": "flo",
   "version": "1.0.0",
-  "description": "",
+  "description": "front",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:sdk": "pnpm --parallel -r --filter './sdk' dev",
+    "start:app": "pnpm --parallel -r --filter './app' dev",
+    "start:dev": "pnpm start:sdk & pnpm start:app"
   },
   "keywords": [],
   "author": "",
