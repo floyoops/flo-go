@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"github.com/floyoops/flo-go/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/pkg/contact/repository"
+	"github.com/floyoops/flo-go/pkg/database"
 )
 
 type ContactMysqlRepository struct {
-	db *Database
+	db *database.Database
 }
 
-func NewContactMysqlRepository(database *Database) *ContactMysqlRepository {
+func NewContactMysqlRepository(database *database.Database) *ContactMysqlRepository {
 	r := &ContactMysqlRepository{db: database}
 	r.InitSchema()
 	return r

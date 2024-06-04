@@ -2,8 +2,8 @@ package contact
 
 import (
 	"errors"
-	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/contact/dto"
-	"github.com/floyoops/flo-go/pkg/app/internal/ui/http/contact/view"
+	"github.com/floyoops/flo-go/internal/ui/http/contact/dto"
+	"github.com/floyoops/flo-go/internal/ui/http/contact/view"
 	"github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/pkg/contact/domain/model"

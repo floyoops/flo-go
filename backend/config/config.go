@@ -1,4 +1,4 @@
-package infra
+package config
 
 import (
 	"github.com/floyoops/flo-go/pkg/contact/domain/model"
