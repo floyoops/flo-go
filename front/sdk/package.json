@@ -11,9 +11,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "rxjs": "^7.8.1"
-  },
   "devDependencies": {
     "rimraf": "^5.0.7",
     "typescript": "^5.4.5"

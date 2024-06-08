@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/floyoops/flo-go/backend/internal/infra"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"html/template"
 	"os"
 )
@@ -19,6 +20,10 @@ func NewApp() *App {
 		Templates: template.Must(template.ParseGlob(rootPath + "/public/*.html")),
 	}
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 	e.Renderer = renderer
 	infra.NewRouter(e, infra.NewContainer(rootPath)).Build()
 	return &App{echo: e}

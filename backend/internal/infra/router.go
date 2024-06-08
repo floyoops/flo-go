@@ -4,11 +4,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-const (
-	HOME    = "/"
-	CONTACT = "/contact"
-)
-
 type Router struct {
 	e  *echo.Echo
 	di *Container
@@ -19,7 +14,7 @@ func NewRouter(e *echo.Echo, di *Container) *Router {
 }
 
 func (r *Router) Build() {
-	r.e.GET(HOME, func(c echo.Context) error { return r.di.HomeController.GetHome(c) })
-	r.e.GET(CONTACT, func(c echo.Context) error { return r.di.ContactController.GetContact(c) })
-	r.e.POST(CONTACT, func(c echo.Context) error { return r.di.ContactController.PostContact(c) })
+	r.e.GET("/", func(c echo.Context) error { return r.di.HomeController.GetHome(c) })
+	r.e.GET("/contact", func(c echo.Context) error { return r.di.ContactController.GetContact(c) })
+	r.e.POST("/post-a-new-message-contact", func(c echo.Context) error { return r.di.ContactController.PostContact(c) })
 }

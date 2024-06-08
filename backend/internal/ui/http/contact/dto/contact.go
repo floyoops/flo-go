@@ -1,7 +1,9 @@
 package dto
 
 import (
+	"encoding/json"
 	"github.com/go-playground/validator/v10"
+	"io"
 )
 
 const (
@@ -18,13 +20,26 @@ const (
 )
 
 type ContactDto struct {
-	Name    string `validate:"required,min=3,max=50"`
-	Email   string `validate:"required,email"`
-	Message string `validate:"required,min=3,max=1000"`
+	Name    string `json:"name" validate:"required,min=3,max=50"`
+	Email   string `json:"email" validate:"required,email"`
+	Message string `json:"message" validate:"required,min=3,max=1000"`
 }
 
 func NewContactDto() *ContactDto {
 	return &ContactDto{}
+}
+
+func FromBody(body io.ReadCloser) (*ContactDto, error) {
+	dto := NewContactDto()
+	b, err := io.ReadAll(body)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, dto)
+	if err != nil {
+		return nil, err
+	}
+	return dto, nil
 }
 
 func (c *ContactDto) Validate() map[string]string {

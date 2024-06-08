@@ -34,14 +34,14 @@ func (ctl *contactController) GetContact(c echo.Context) error {
 }
 
 func (ctl *contactController) PostContact(c echo.Context) error {
-	contactDto := dto.NewContactDto()
-	contactDto.Name = c.FormValue("name")
-	contactDto.Email = c.FormValue("email")
-	contactDto.Message = c.FormValue("message")
+	contactDto, err := dto.FromBody(c.Request().Body)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
 
 	if errorsView := contactDto.Validate(); errorsView != nil {
 		dataView := view.NewContactView(contactDto, &errorsView, false)
-		return c.Render(http.StatusBadRequest, contactPage, dataView)
+		return c.JSON(http.StatusBadRequest, dataView)
 	}
 
 	email, err := model.NewEmail(contactDto.Email)
@@ -66,9 +66,8 @@ func (ctl *contactController) PostContact(c echo.Context) error {
 			errorsView = map[string]string{"error": "une erreur est survenue veuillez réessayer ultérieurement"}
 		}
 		dataView := view.NewContactView(contactDto, &errorsView, false)
-		return c.Render(http.StatusInternalServerError, contactPage, dataView)
+		return c.JSON(http.StatusInternalServerError, dataView)
 	}
 
-	dataView := view.NewContactView(contactDto, &map[string]string{}, true)
-	return c.Render(http.StatusCreated, contactPage, dataView)
+	return c.NoContent(http.StatusCreated)
 }

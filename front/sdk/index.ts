@@ -1,1 +1,2 @@
-console.log('index sdk');
+export * from './contact';
+export * from './sdk';
