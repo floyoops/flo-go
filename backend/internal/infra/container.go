@@ -1,14 +1,14 @@
 package infra
 
 import (
-	"github.com/floyoops/flo-go/config"
-	"github.com/floyoops/flo-go/internal/ui/http/contact"
-	"github.com/floyoops/flo-go/internal/ui/http/home"
-	"github.com/floyoops/flo-go/pkg/contact/command/send_a_new_message"
-	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
-	"github.com/floyoops/flo-go/pkg/contact/infra"
-	database2 "github.com/floyoops/flo-go/pkg/database"
-	mailer2 "github.com/floyoops/flo-go/pkg/mailer"
+	"github.com/floyoops/flo-go/backend/config"
+	"github.com/floyoops/flo-go/backend/internal/ui/http/contact"
+	"github.com/floyoops/flo-go/backend/internal/ui/http/home"
+	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
+	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
+	database2 "github.com/floyoops/flo-go/backend/pkg/database"
+	mailer2 "github.com/floyoops/flo-go/backend/pkg/mailer"
 )
 
 type Container struct {

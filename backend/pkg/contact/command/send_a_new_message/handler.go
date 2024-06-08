@@ -2,10 +2,10 @@ package send_a_new_message
 
 import (
 	"fmt"
-	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
-	"github.com/floyoops/flo-go/pkg/contact/domain/model"
-	"github.com/floyoops/flo-go/pkg/contact/repository"
-	"github.com/floyoops/flo-go/pkg/core"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
+	"github.com/floyoops/flo-go/backend/pkg/contact/repository"
+	"github.com/floyoops/flo-go/backend/pkg/core"
 )
 
 type Handler struct {

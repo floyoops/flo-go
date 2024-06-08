@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/floyoops/flo-go/pkg/contact/domain/model"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/labstack/gommon/log"
 	"os"
 )

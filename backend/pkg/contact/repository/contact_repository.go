@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"github.com/floyoops/flo-go/pkg/contact/domain/model"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 )
 
 type ContactRepository interface {

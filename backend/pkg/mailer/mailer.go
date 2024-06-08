@@ -2,8 +2,8 @@ package mailer
 
 import (
 	"fmt"
-	"github.com/floyoops/flo-go/pkg/contact/domain/mailer"
-	"github.com/floyoops/flo-go/pkg/contact/domain/model"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/labstack/gommon/log"
 	"net/smtp"
 	"strconv"

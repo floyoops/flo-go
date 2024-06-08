@@ -3,7 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
-	"github.com/floyoops/flo-go/internal/infra"
+	"github.com/floyoops/flo-go/backend/internal/infra"
 	"github.com/labstack/echo/v4"
 	"html/template"
 	"os"

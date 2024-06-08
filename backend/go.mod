@@ -1,4 +1,4 @@
-module github.com/floyoops/flo-go
+module github.com/floyoops/flo-go/backend
 
 go 1.22.2
 

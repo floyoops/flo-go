@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/floyoops/flo-go/internal"
+	"github.com/floyoops/flo-go/backend/internal"
 	"time"
 )
 

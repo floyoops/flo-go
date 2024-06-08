@@ -1,6 +1,6 @@
 package model
 
-import "github.com/floyoops/flo-go/pkg/core"
+import "github.com/floyoops/flo-go/backend/pkg/core"
 
 type Contact struct {
 	Uuid      core.Identifier
