@@ -2,6 +2,7 @@ import {css, html, LitElement} from "lit";
 import {customElement, state} from "lit/decorators.js";
 import {NewMessageDto, Sdk} from "@flo/sdk";
 import "./components/fg-alert/fg-alert.ts";
+import  "wired-elements"
 
 @customElement('form-contact')
 export class FormContact extends LitElement {
@@ -29,21 +30,27 @@ export class FormContact extends LitElement {
     }
 
     render(): unknown {
-        return html`
-            <div class="form-contact">
-                ${this.showErrorSubmit ? html`<fg-alert @close-alert="${this._handleCloseAlert}">Erreur pendant l'envoie du formulaire</fg-alert>`: html``}
-                <form name="contact" @submit="${this._submitForm}">
-                    <label for="name">Nom</label>
-                    <input type="text" name="name" .value="${this.dto.name}" @input="${this._handleInput}">
-                    <label for="email">Email</label>
-                    <input type="text" name="email" .value="${this.dto.email}" @input="${this._handleInput}">
-                    <label for="message">Message</label>
-                    <textarea name="message" id="message-0-m" cols="30" rows="10" .value="${this.dto.message}" @input="${this._handleInput}"></textarea>
-                    <button ?disabled=${this.isDisabled} @click="${this._submitForm}">
-                        ${this.isLoading ? html`Ca envoie ;)` : html `Envoyer`}
-                    </button>
+        return html `
+            <wired-card elevation="5">
+                <h4>Contact</h4>
+                <form @submit="${this._submitForm}">
+                    <div>
+                        <label for="name">Nom</label>
+                        <wired-input placeholder="Enter name" name="name" .value="${this.dto.name}" @input="${this._handleInput}"></wired-input>    
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <wired-input placeholder="Enter email" type="text" name="email" .value="${this.dto.email}" @input="${this._handleInput}"></wired-input>    
+                    </div>
+                    <div>
+                        <label for="message">Message</label>
+                        <wired-textarea placeholder="Enter message" name="message" rows="6" .value="${this.dto.message}" @input="${this._handleMessage}"></wired-textarea>    
+                    </div>
+                    <div class="actions">
+                        <wired-button elevation="2" @click="${this._submitForm}">Submit</wired-button>
+                    </div>
                 </form>
-            </div>
+            </wired-card>
         `
     }
 
@@ -56,6 +63,7 @@ export class FormContact extends LitElement {
 
     async _submitForm(e: Event): Promise<void> {
         e.preventDefault();
+        console.log('_submitForm', this.dto);
         if (!this.dto.isValid()) {
             return;
         }
@@ -82,6 +90,7 @@ export class FormContact extends LitElement {
     _handleInput(event: Event) {
         // @ts-ignore
         const { name, value } = event.target;
+        console.log('_handleInput', name, value);
         if(!this.dto.hasOwnProperty(name)) {
             return;
         }
@@ -91,23 +100,39 @@ export class FormContact extends LitElement {
         this.isDisabled = !this.dto.isValid();
     }
 
+    _handleMessage(event: Event) {
+        const { value } = event.target;
+        console.log('_handleMessage', value);
+
+        // @ts-ignore
+        this.dto['message'] = value;
+        this.showErrorSubmit = false;
+        this.isDisabled = !this.dto.isValid();
+    }
+
     _handleCloseAlert() {
         this.showErrorSubmit = false;
     }
 
     static styles = [css`
-        .form-contact {
-            max-width: 500px;
+        form > div {
+            margin-bottom: 20px;
         }
-        .form-contact > form > input {
-            width: 98%;
+        .actions {
+            text-align: "center";
         }
-        .form-contact > form > textarea {
-            width: 98%;
+        label {
+            display: block;
         }
-        .form-contact > form > button {
-            margin-top: 10px;
-            width: 100%;
+        wired-card {
+            padding: 20px;
+        }
+        wired-input {
+            width: 200px;
+            font-family: inherit;
+        }
+        wired-textarea {
+            font-family: inherit;
         }
     `];
 }
