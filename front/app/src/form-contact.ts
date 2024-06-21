@@ -34,6 +34,7 @@ export class FormContact extends LitElement {
             <wired-card elevation="5">
                 <h4>Contact</h4>
                 <form @submit="${this._submitForm}">
+                    ${this.showErrorSubmit ? html`<fg-alert @close-alert="${this._handleCloseAlert}">Erreur pendant l'envoie du formulaire</fg-alert>`: html``}
                     <div>
                         <label for="name">Nom</label>
                         <wired-input placeholder="Enter name" name="name" .value="${this.dto.name}" @input="${this._handleInput}"></wired-input>    
@@ -47,7 +48,9 @@ export class FormContact extends LitElement {
                         <wired-textarea placeholder="Enter message" name="message" rows="6" .value="${this.dto.message}" @input="${this._handleMessage}"></wired-textarea>    
                     </div>
                     <div class="actions">
-                        <wired-button elevation="2" @click="${this._submitForm}">Submit</wired-button>
+                        <wired-button elevation="2" ?disabled=${this.isDisabled} @click="${this._submitForm}">
+                        ${this.isLoading ? html`Ca envoie ;)` : html `Envoyer`}
+                        </wired-button>
                     </div>
                 </form>
             </wired-card>
@@ -63,6 +66,9 @@ export class FormContact extends LitElement {
 
     async _submitForm(e: Event): Promise<void> {
         e.preventDefault();
+        if (this.isDisabled) {
+            return Promise.resolve();
+        }
         console.log('_submitForm', this.dto);
         if (!this.dto.isValid()) {
             return;
@@ -90,7 +96,6 @@ export class FormContact extends LitElement {
     _handleInput(event: Event) {
         // @ts-ignore
         const { name, value } = event.target;
-        console.log('_handleInput', name, value);
         if(!this.dto.hasOwnProperty(name)) {
             return;
         }
