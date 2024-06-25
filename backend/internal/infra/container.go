@@ -8,7 +8,6 @@ import (
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
 	database2 "github.com/floyoops/flo-go/backend/pkg/database"
-	mailer2 "github.com/floyoops/flo-go/backend/pkg/mailer"
 )
 
 type Container struct {
@@ -24,7 +23,7 @@ func NewContainer(rootPath string) *Container {
 	databaseDns := configuration.DatabaseUser + ":" + configuration.DatabasePassword + "@tcp(" + configuration.DatabaseHost + ":" + configuration.DatabasePort + ")/" + configuration.DatabaseName
 	database := database2.NewDatabase(databaseDns)
 	contactRepository := infra.NewContactMysqlRepository(database)
-	newMailer := mailer2.NewMailer(configuration.SmtpHost, configuration.SmtpPort, configuration.SmtpUsername, configuration.SmtpPassword)
+	newMailer := infra.NewMailer(configuration.SmtpHost, configuration.SmtpPort, configuration.SmtpUsername, configuration.SmtpPassword)
 	sendANewsMessageCommandHandler := send_a_new_message.NewHandler(contactRepository, newMailer, configuration.ContactEmailApp)
 	homeController := home.NewHomeController()
 	contactController := contact.NewContactController(sendANewsMessageCommandHandler)
