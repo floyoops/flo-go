@@ -18,6 +18,9 @@ export class FormContact extends LitElement {
     @state()
     showErrorSubmit: boolean;
 
+    @state()
+    errorsForm: {name?: string, email?: string, message?: string} | null
+
     sdk: Sdk
 
     constructor() {
@@ -27,6 +30,7 @@ export class FormContact extends LitElement {
         this.isLoading = false;
         this.isDisabled = true;
         this.showErrorSubmit = false;
+        this.errorsForm = null;
     }
 
     render(): unknown {
@@ -37,14 +41,17 @@ export class FormContact extends LitElement {
                     ${this.showErrorSubmit ? html`<fg-alert @close-alert="${this._handleCloseAlert}">Erreur pendant l'envoie du formulaire</fg-alert>`: html``}
                     <div>
                         <label for="name">Nom</label>
+                        ${this.errorsForm?.name ? html`<div class="error">${this.errorsForm.name}</div>`: html`` }
                         <wired-input placeholder="Enter name" name="name" .value="${this.dto.name}" @input="${this._handleInput}"></wired-input>    
                     </div>
                     <div>
                         <label for="email">Email</label>
+                        ${this.errorsForm?.email ? html`<div class="error">${this.errorsForm.email}</div>`: html`` }
                         <wired-input placeholder="Enter email" type="text" name="email" .value="${this.dto.email}" @input="${this._handleInput}"></wired-input>    
                     </div>
                     <div>
                         <label for="message">Message</label>
+                        ${this.errorsForm?.message ? html`<div class="error">${this.errorsForm.message}</div>`: html`` }
                         <wired-textarea placeholder="Enter message" name="message" rows="6" .value="${this.dto.message}" @input="${this._handleMessage}"></wired-textarea>    
                     </div>
                     <div class="actions">
@@ -61,11 +68,13 @@ export class FormContact extends LitElement {
         this.isLoading = false;
         this.isDisabled = false;
         this.showErrorSubmit = false;
+        this.errorsForm = null;
         this.dto = new NewMessageDto('', '', '');
     }
 
     async _submitForm(e: Event): Promise<void> {
         e.preventDefault();
+        this.errorsForm = null;
         if (this.isDisabled) {
             return Promise.resolve();
         }
@@ -78,6 +87,14 @@ export class FormContact extends LitElement {
         try {
             const r = await this.sdk.contact.postANewMessage(this.dto);
             if (r.status >= 400 && r.status < 500) {
+                const data = await r.json();
+                this.errorsForm = {
+                    name: data.errors?.name,
+                    email: data.errors?.email,
+                    message: data.errors?.message
+                };
+                console.log('data', data);
+                console.log('this.errorsForm', this.errorsForm);
                 this.showErrorSubmit = true;
             }
             if (r.status === 201) {
@@ -106,6 +123,7 @@ export class FormContact extends LitElement {
     }
 
     _handleMessage(event: Event) {
+        // @ts-ignore
         const { value } = event.target;
         console.log('_handleMessage', value);
 
@@ -122,6 +140,10 @@ export class FormContact extends LitElement {
     static styles = [css`
         form > div {
             margin-bottom: 20px;
+        }
+        .error {
+            color: red;
+            text-decoration: underline
         }
         .actions {
             text-align: "center";
