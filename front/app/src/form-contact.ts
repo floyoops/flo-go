@@ -78,7 +78,6 @@ export class FormContact extends LitElement {
         if (this.isDisabled) {
             return Promise.resolve();
         }
-        console.log('_submitForm', this.dto);
         if (!this.dto.isValid()) {
             return;
         }
@@ -93,17 +92,13 @@ export class FormContact extends LitElement {
                     email: data.errors?.email,
                     message: data.errors?.message
                 };
-                console.log('data', data);
-                console.log('this.errorsForm', this.errorsForm);
                 this.showErrorSubmit = true;
             }
             if (r.status === 201) {
                 this._initForm();
             }
-            console.log('r', r);
         } catch (e) {
             this.showErrorSubmit = true;
-            console.error('error submitForm', e);
         }
 
         this.isLoading = false;
@@ -119,13 +114,13 @@ export class FormContact extends LitElement {
         // @ts-ignore
         this.dto[name] = value;
         this.showErrorSubmit = false;
+        this.errorsForm = null;
         this.isDisabled = !this.dto.isValid();
     }
 
     _handleMessage(event: Event) {
         // @ts-ignore
         const { value } = event.target;
-        console.log('_handleMessage', value);
 
         // @ts-ignore
         this.dto['message'] = value;
