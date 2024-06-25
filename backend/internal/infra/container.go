@@ -8,10 +8,12 @@ import (
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
 	database2 "github.com/floyoops/flo-go/backend/pkg/database"
+	"github.com/floyoops/flo-go/backend/pkg/logger"
 )
 
 type Container struct {
 	Config                       *config.Config
+	Logger                       logger.Logger
 	mailer                       mailer.Mailer
 	SendNewMessageCommandHandler *send_a_new_message.Handler
 	HomeController               home.HomeController
@@ -20,6 +22,7 @@ type Container struct {
 
 func NewContainer(rootPath string) *Container {
 	configuration := config.NewConfig(rootPath)
+	zapLogger := logger.NewZapLogger()
 	databaseDns := configuration.DatabaseUser + ":" + configuration.DatabasePassword + "@tcp(" + configuration.DatabaseHost + ":" + configuration.DatabasePort + ")/" + configuration.DatabaseName
 	database := database2.NewDatabase(databaseDns)
 	contactRepository := infra.NewContactMysqlRepository(database)
@@ -29,6 +32,7 @@ func NewContainer(rootPath string) *Container {
 	contactController := contact.NewContactController(sendANewsMessageCommandHandler)
 	return &Container{
 		Config:                       configuration,
+		Logger:                       zapLogger,
 		mailer:                       newMailer,
 		SendNewMessageCommandHandler: sendANewsMessageCommandHandler,
 		ContactController:            contactController,
