@@ -1,13 +1,10 @@
 package contact
 
 import (
-	"errors"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/contact/dto"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/contact/view"
 	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
-	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
-	"github.com/floyoops/flo-go/backend/pkg/contact/repository"
 	"github.com/floyoops/flo-go/backend/pkg/core"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -57,17 +54,7 @@ func (ctl *contactController) PostContact(c echo.Context) error {
 	})
 
 	if err != nil {
-		log.Errorf(err.Error())
-		errorsView := make(map[string]string)
-		if errors.Is(err, repository.ErrOnSaveContact) {
-			errorsView = map[string]string{"error": "une erreur est survenue pendant la sauvegarde veuillez réessayer ultérieurement"}
-		} else if errors.Is(err, mailer.ErrOnSend) {
-			errorsView = map[string]string{"error": "une erreur est survenue pendant l envoie du mail veuillez réessayer ultérieurement"}
-		} else {
-			errorsView = map[string]string{"error": "une erreur est survenue veuillez réessayer ultérieurement"}
-		}
-		dataView := view.NewContactView(contactDto, &errorsView, false)
-		return c.JSON(http.StatusInternalServerError, dataView)
+		return err
 	}
 
 	return c.NoContent(http.StatusCreated)
