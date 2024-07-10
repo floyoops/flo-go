@@ -1,9 +1,7 @@
 package dto
 
 import (
-	"encoding/json"
 	"github.com/go-playground/validator/v10"
-	"io"
 )
 
 const (
@@ -27,19 +25,6 @@ type ContactDto struct {
 
 func NewContactDto() *ContactDto {
 	return &ContactDto{}
-}
-
-func FromBody(body io.ReadCloser) (*ContactDto, error) {
-	dto := NewContactDto()
-	b, err := io.ReadAll(body)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(b, dto)
-	if err != nil {
-		return nil, err
-	}
-	return dto, nil
 }
 
 func (c *ContactDto) Validate() map[string]string {

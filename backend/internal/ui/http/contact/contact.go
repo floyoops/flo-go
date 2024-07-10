@@ -34,7 +34,8 @@ func (ctl *contactController) GetContact(c echo.Context) error {
 }
 
 func (ctl *contactController) PostContact(c echo.Context) error {
-	contactDto, err := dto.FromBody(c.Request().Body)
+	contactDto := dto.NewContactDto()
+	err := c.Bind(contactDto)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
