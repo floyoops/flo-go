@@ -4,13 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/floyoops/flo-go/backend/internal/infra"
-	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
-	"github.com/floyoops/flo-go/backend/pkg/contact/repository"
+	"github.com/floyoops/flo-go/backend/internal/infra/http"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
-	"html/template"
-	"net/http"
 	"os"
 )
 
@@ -18,39 +13,20 @@ type App struct {
 	echo *echo.Echo
 }
 
-func customHTTPErrorHandler(err error, c echo.Context) {
-	log.Errorf(err.Error())
-	errorHttp := echo.NewHTTPError(http.StatusInternalServerError)
-	if errors.Is(err, repository.ErrOnSaveContact) {
-		errorHttp.Message = "une erreur est survenue pendant la sauvegarde veuillez réessayer ultérieurement"
-	} else if errors.Is(err, mailer.ErrOnSend) {
-		errorHttp.Message = "une erreur est survenue pendant l envoie du mail veuillez réessayer ultérieurement"
-	} else {
-		errorHttp.Message = "une erreur est survenue veuillez réessayer ultérieurement"
-	}
-	err = c.JSON(http.StatusInternalServerError, errorHttp)
+func NewApp() (*App, error) {
+	rootPath, err := os.Getwd()
 	if err != nil {
-		log.Errorf(err.Error())
-		return
+		return nil, err
 	}
-}
+	container := infra.NewContainer(rootPath)
 
-func NewApp() *App {
-	rootPath, _ := os.Getwd()
-	renderer := &infra.TemplateRenderer{
-		Templates: template.Must(template.ParseGlob(rootPath + "/public/*.html")),
-	}
-	e := echo.New()
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:5173"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	}))
+	echoFactory := http.NewEchoFactory(container)
+	echoFactory.WithCors([]string{"http://localhost:5173"})
+	echoFactory.WithTemplateRenderer(true)
+	echoFactory.WithCustomErrorHandler(true)
+	echoFactory.WithRouter(true)
 
-	e.HTTPErrorHandler = customHTTPErrorHandler
-
-	e.Renderer = renderer
-	infra.NewRouter(e, infra.NewContainer(rootPath)).Build()
-	return &App{echo: e}
+	return &App{echo: echoFactory.Build()}, nil
 }
 
 func (a *App) Start(port int) error {
