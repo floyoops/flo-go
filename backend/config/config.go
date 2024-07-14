@@ -1,9 +1,11 @@
 package config
 
 import (
+	"fmt"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
-	"github.com/labstack/gommon/log"
+	"github.com/joho/godotenv"
 	"os"
+	"strings"
 )
 
 type Config struct {
@@ -18,12 +20,21 @@ type Config struct {
 	SmtpUsername     string
 	SmtpPassword     string
 	ContactEmailApp  *model.Email
+	HttpAllowOrigins []string
 }
 
-func NewConfig(rootPath string) *Config {
+func NewConfig() (*Config, error) {
+	rootPath, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
 	contactEmailApp, err := model.NewEmail(getEnv("CONTACT_EMAIL_APP", "flogo@flogo.com"))
 	if err != nil {
-		log.Fatalf("error for key env CONTACT_EMAIL_APP: %v", err)
+		return nil, fmt.Errorf("error for key env CONTACT_EMAIL_APP:: %w", err)
+	}
+	err = godotenv.Load(string(rootPath) + "/.env")
+	if err != nil {
+		return nil, fmt.Errorf("error on load .env:: %w", err)
 	}
 
 	return &Config{
@@ -38,7 +49,8 @@ func NewConfig(rootPath string) *Config {
 		SmtpUsername:     getEnv("SMTP_USER", "flogo"),
 		SmtpPassword:     getEnv("SMTP_PASSWORD", "toor"),
 		ContactEmailApp:  contactEmailApp,
-	}
+		HttpAllowOrigins: getEnvAsSlice("HTTP_ALLOW_ORIGINS", []string{"http://localhost:3000"}, ","),
+	}, nil
 }
 
 func getEnv(key string, defaultVal string) string {
@@ -46,4 +58,13 @@ func getEnv(key string, defaultVal string) string {
 		return value
 	}
 	return defaultVal
+}
+
+func getEnvAsSlice(name string, defaultVal []string, sep string) []string {
+	valStr := getEnv(name, "")
+	if valStr == "" {
+		return defaultVal
+	}
+	val := strings.Split(valStr, sep)
+	return val
 }

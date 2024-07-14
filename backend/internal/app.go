@@ -6,7 +6,6 @@ import (
 	"github.com/floyoops/flo-go/backend/internal/infra"
 	"github.com/floyoops/flo-go/backend/internal/infra/http"
 	"github.com/labstack/echo/v4"
-	"os"
 )
 
 type App struct {
@@ -14,14 +13,13 @@ type App struct {
 }
 
 func NewApp() (*App, error) {
-	rootPath, err := os.Getwd()
+	container, err := infra.NewContainer()
 	if err != nil {
 		return nil, err
 	}
-	container := infra.NewContainer(rootPath)
 
 	echoFactory := http.NewEchoFactory(container)
-	echoFactory.WithCors([]string{"http://localhost:5173"})
+	echoFactory.WithCors(true)
 	echoFactory.WithTemplateRenderer(true)
 	echoFactory.WithCustomErrorHandler(true)
 	echoFactory.WithRouter(true)

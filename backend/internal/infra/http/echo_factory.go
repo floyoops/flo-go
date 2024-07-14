@@ -9,7 +9,7 @@ import (
 
 type EchoFactory struct {
 	di                 *infra.Container
-	allowOrigins       []string
+	allowOrigins       bool
 	customErrorHandler bool
 	templateRenderer   bool
 	router             bool
@@ -18,15 +18,15 @@ type EchoFactory struct {
 func NewEchoFactory(container *infra.Container) *EchoFactory {
 	return &EchoFactory{
 		di:                 container,
-		allowOrigins:       []string{},
+		allowOrigins:       false,
 		customErrorHandler: false,
 		templateRenderer:   false,
 		router:             false,
 	}
 }
 
-func (f *EchoFactory) WithCors(allowOrigins []string) *EchoFactory {
-	f.allowOrigins = allowOrigins
+func (f *EchoFactory) WithCors(value bool) *EchoFactory {
+	f.allowOrigins = value
 	return f
 }
 
@@ -47,9 +47,9 @@ func (f *EchoFactory) WithRouter(value bool) *EchoFactory {
 
 func (f *EchoFactory) Build() *echo.Echo {
 	e := echo.New()
-	if len(f.allowOrigins) > 0 {
+	if f.allowOrigins {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: f.allowOrigins,
+			AllowOrigins: f.di.Config.HttpAllowOrigins,
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 		}))
 	}

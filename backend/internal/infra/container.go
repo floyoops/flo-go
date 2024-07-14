@@ -20,8 +20,12 @@ type Container struct {
 	ContactController            contact.ContactController
 }
 
-func NewContainer(rootPath string) *Container {
-	configuration := config.NewConfig(rootPath)
+func NewContainer() (*Container, error) {
+	configuration, err := config.NewConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	zapLogger := logger.NewZapLogger()
 	databaseDns := configuration.DatabaseUser + ":" + configuration.DatabasePassword + "@tcp(" + configuration.DatabaseHost + ":" + configuration.DatabasePort + ")/" + configuration.DatabaseName
 	database := database2.NewDatabase(databaseDns)
@@ -37,5 +41,5 @@ func NewContainer(rootPath string) *Container {
 		SendNewMessageCommandHandler: sendANewsMessageCommandHandler,
 		ContactController:            contactController,
 		HomeController:               homeController,
-	}
+	}, nil
 }
