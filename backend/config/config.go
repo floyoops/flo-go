@@ -53,6 +53,10 @@ func NewConfig() (*Config, error) {
 	}, nil
 }
 
+func (c *Config) GetDatabaseDns() string {
+	return c.DatabaseUser + ":" + c.DatabasePassword + "@tcp(" + c.DatabaseHost + ":" + c.DatabasePort + ")/" + c.DatabaseName
+}
+
 func getEnv(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
