@@ -35,8 +35,9 @@ func BuildApp() (*internal.App, error) {
 	email := provideContactFromEmail(configConfig)
 	handler := send_a_new_message.NewHandler(contactMysqlRepository, mailer, email)
 	contactController := contact.NewContactController(handler)
-	echoFactory := provideEchoFactory(configConfig, homeController, contactController)
-	app, err := internal.NewApp(echoFactory)
+	v := http.NewRoutes(homeController, contactController)
+	serverFactory := provideServerFactory(configConfig, v)
+	app, err := internal.NewApp(serverFactory)
 	if err != nil {
 		return nil, err
 	}
@@ -45,10 +46,10 @@ func BuildApp() (*internal.App, error) {
 
 // wire.go:
 
-func provideEchoFactory(config2 *config.Config,
-	homeCtrl home.HomeController,
-	contactCtrl contact.ContactController) *http.ServerFactory {
-	return http.NewServerFactory(config2.RootPath, config2.HttpAllowOrigins, homeCtrl, contactCtrl)
+func provideServerFactory(config2 *config.Config,
+	routes []http.Route,
+) *http.ServerFactory {
+	return http.NewServerFactory(config2.RootPath, config2.HttpAllowOrigins, routes)
 }
 
 func provideDatabase(config2 *config.Config) *database.Database {

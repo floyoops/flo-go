@@ -2,8 +2,6 @@ package http
 
 import (
 	"github.com/floyoops/flo-go/backend/internal/infra"
-	"github.com/floyoops/flo-go/backend/internal/ui/http/contact"
-	"github.com/floyoops/flo-go/backend/internal/ui/http/home"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"html/template"
@@ -12,21 +10,18 @@ import (
 type ServerFactory struct {
 	rootPath         string
 	httpAllowOrigins []string
-	homeCtrl         home.HomeController
-	contactCtrl      contact.ContactController
+	routes           []Route
 }
 
 func NewServerFactory(
 	rootPath string,
-	HttpAllowOrigins []string,
-	homeCtrl home.HomeController,
-	contactCtrl contact.ContactController,
+	httpAllowOrigins []string,
+	routes []Route,
 ) *ServerFactory {
 	return &ServerFactory{
 		rootPath:         rootPath,
-		httpAllowOrigins: HttpAllowOrigins,
-		homeCtrl:         homeCtrl,
-		contactCtrl:      contactCtrl,
+		httpAllowOrigins: httpAllowOrigins,
+		routes:           routes,
 	}
 }
 
@@ -45,7 +40,9 @@ func (f *ServerFactory) Build() *echo.Echo {
 	}
 	e.Renderer = renderer
 
-	router(e, f.homeCtrl, f.contactCtrl)
+	for _, r := range f.routes {
+		e.Add(r.method, r.path, r.handler)
+	}
 
 	return e
 }

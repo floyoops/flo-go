@@ -20,9 +20,9 @@ import (
 
 func provideServerFactory(
 	config *config.Config,
-	homeCtrl home.HomeController,
-	contactCtrl contact.ContactController) *http.ServerFactory {
-	return http.NewServerFactory(config.RootPath, config.HttpAllowOrigins, homeCtrl, contactCtrl)
+	routes []http.Route,
+) *http.ServerFactory {
+	return http.NewServerFactory(config.RootPath, config.HttpAllowOrigins, routes)
 }
 
 func provideDatabase(config *config.Config) *database.Database {
@@ -55,6 +55,7 @@ func BuildApp() (*internal.App, error) {
 		send_a_new_message.NewHandler,
 		home.NewHomeController,
 		contact.NewContactController,
+		http.NewRoutes,
 		provideServerFactory,
 		internal.NewApp,
 	)
