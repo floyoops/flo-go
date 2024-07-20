@@ -15,6 +15,7 @@ import (
 	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
 	"github.com/floyoops/flo-go/backend/pkg/contact/repository"
 	"github.com/floyoops/flo-go/backend/pkg/database"
+	"github.com/floyoops/flo-go/backend/pkg/logger"
 	"github.com/google/wire"
 )
 
@@ -42,15 +43,20 @@ var (
 		infra.NewContactMysqlRepository,
 		wire.Bind(new(repository.ContactRepository), new(*infra.ContactMysqlRepository)),
 	)
+	loggerWiring = wire.NewSet(
+		logger.NewZapLogger,
+		wire.Bind(new(logger.Logger), new(*logger.ZapLogger)),
+	)
 )
 
 func BuildApp() (*internal.App, error) {
 
 	wire.Build(
 		config.NewConfig,
+		loggerWiring,
+		databaseWiring,
 		provideDatabase,
 		provideMailer,
-		databaseWiring,
 		provideContactFromEmail,
 		send_a_new_message.NewHandler,
 		home.NewHomeController,

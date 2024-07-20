@@ -18,6 +18,7 @@ import (
 	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
 	"github.com/floyoops/flo-go/backend/pkg/contact/repository"
 	"github.com/floyoops/flo-go/backend/pkg/database"
+	"github.com/floyoops/flo-go/backend/pkg/logger"
 	"github.com/google/wire"
 )
 
@@ -37,7 +38,8 @@ func BuildApp() (*internal.App, error) {
 	contactController := contact.NewContactController(handler)
 	v := http.NewRoutes(homeController, contactController)
 	serverFactory := provideServerFactory(configConfig, v)
-	app, err := internal.NewApp(serverFactory)
+	zapLogger := logger.NewZapLogger()
+	app, err := internal.NewApp(serverFactory, zapLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -66,4 +68,5 @@ func provideContactFromEmail(config2 *config.Config) *model.Email {
 
 var (
 	databaseWiring = wire.NewSet(infra.NewContactMysqlRepository, wire.Bind(new(repository.ContactRepository), new(*infra.ContactMysqlRepository)))
+	loggerWiring   = wire.NewSet(logger.NewZapLogger, wire.Bind(new(logger.Logger), new(*logger.ZapLogger)))
 )
