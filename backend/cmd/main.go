@@ -16,7 +16,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := app.Start(8080); err != nil {
+	if err := app.Start(); err != nil {
 		panic(err)
 	}
 }

@@ -39,10 +39,7 @@ func BuildApp() (*internal.App, error) {
 	v := http.NewRoutes(homeController, contactController)
 	serverFactory := provideServerFactory(configConfig, v)
 	zapLogger := logger.NewZapLogger()
-	app, err := internal.NewApp(serverFactory, zapLogger)
-	if err != nil {
-		return nil, err
-	}
+	app := provideApp(serverFactory, zapLogger, configConfig)
 	return app, nil
 }
 
@@ -64,6 +61,14 @@ func provideMailer(config2 *config.Config) mailer.Mailer {
 
 func provideContactFromEmail(config2 *config.Config) *model.Email {
 	return config2.ContactEmailApp
+}
+
+func provideApp(serverFactory *http.ServerFactory, logger2 logger.Logger, config2 *config.Config) *internal.App {
+	app, err := internal.NewApp(serverFactory, logger2, config2.ServerPortHttp)
+	if err != nil {
+		panic(err)
+	}
+	return app
 }
 
 var (

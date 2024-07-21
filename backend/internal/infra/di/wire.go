@@ -38,6 +38,14 @@ func provideContactFromEmail(config *config.Config) *model.Email {
 	return config.ContactEmailApp
 }
 
+func provideApp(serverFactory *http.ServerFactory, logger logger.Logger, config *config.Config) *internal.App {
+	app, err := internal.NewApp(serverFactory, logger, config.ServerPortHttp)
+	if err != nil {
+		panic(err)
+	}
+	return app
+}
+
 var (
 	databaseWiring = wire.NewSet(
 		infra.NewContactMysqlRepository,
@@ -63,7 +71,7 @@ func BuildApp() (*internal.App, error) {
 		contact.NewContactController,
 		http.NewRoutes,
 		provideServerFactory,
-		internal.NewApp,
+		provideApp,
 	)
 	return &internal.App{}, nil
 }

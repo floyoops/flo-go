@@ -5,11 +5,13 @@ import (
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/joho/godotenv"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type Config struct {
 	RootPath         string
+	ServerPortHttp   int
 	DatabaseHost     string
 	DatabasePort     string
 	DatabaseName     string
@@ -39,6 +41,7 @@ func NewConfig() (*Config, error) {
 
 	return &Config{
 		RootPath:         rootPath,
+		ServerPortHttp:   getEnvAsInt("SERVER_HTTP_PORT", 8080),
 		DatabaseHost:     getEnv("DATABASE_HOST", "localhost"),
 		DatabasePort:     getEnv("DATABASE_PORT", "3306"),
 		DatabaseName:     getEnv("DATABASE_NAME", "flogo"),
@@ -59,6 +62,14 @@ func (c *Config) GetDatabaseDns() string {
 
 func getEnv(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultVal
+}
+
+func getEnvAsInt(name string, defaultVal int) int {
+	valueStr := getEnv(name, "")
+	if value, err := strconv.Atoi(valueStr); err == nil {
 		return value
 	}
 	return defaultVal
