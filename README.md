@@ -4,8 +4,8 @@ app web golang
 Start bdd
 
 ```bash
-docker compose -f docker-composer.yaml -p flo-go up -d
-docker compose -f docker-composer.yaml -p flo-go down -d
+docker compose -f docker-compose.yaml -p flo-go up -d
+docker compose -f docker-compose.yaml -p flo-go down -d
 ```
 
 Start backend
