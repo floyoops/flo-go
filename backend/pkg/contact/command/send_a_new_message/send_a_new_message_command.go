@@ -1,6 +1,9 @@
 package send_a_new_message
 
-import "github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
+import (
+	"github.com/floyoops/flo-go/backend/pkg/bus"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
+)
 
 type SendANewMessageCommand struct {
 	Name    string
@@ -10,4 +13,8 @@ type SendANewMessageCommand struct {
 
 func NewSendANewMessageCommand(name string, email *model.Email, message string) *SendANewMessageCommand {
 	return &SendANewMessageCommand{Name: name, Email: email, Message: message}
+}
+
+func (c *SendANewMessageCommand) Identifier() bus.CommandIdentifier {
+	return bus.NewIdentifierFromCommand(c)
 }
