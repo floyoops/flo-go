@@ -9,6 +9,7 @@ import (
 	"github.com/floyoops/flo-go/backend/internal/infra/http"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/contact"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/home"
+	"github.com/floyoops/flo-go/backend/pkg/bus"
 	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
@@ -46,6 +47,12 @@ func provideApp(serverFactory *http.ServerFactory, logger logger.Logger, config 
 	return app
 }
 
+func provideCommandBus(handler *send_a_new_message.SendANewMessageCommandHandler) *bus.CommandBus {
+	b := bus.NewCommandBus()
+	b.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, handler)
+	return b
+}
+
 var (
 	databaseWiring = wire.NewSet(
 		infra.NewContactMysqlRepository,
@@ -54,6 +61,9 @@ var (
 	loggerWiring = wire.NewSet(
 		logger.NewZapLogger,
 		wire.Bind(new(logger.Logger), new(*logger.ZapLogger)),
+	)
+	handlerWiring = wire.NewSet(
+		send_a_new_message.NewHandler,
 	)
 )
 
@@ -67,6 +77,7 @@ func BuildApp() (*internal.App, error) {
 		provideMailer,
 		provideContactFromEmail,
 		send_a_new_message.NewHandler,
+		provideCommandBus,
 		home.NewHomeController,
 		contact.NewContactController,
 		http.NewRoutes,

@@ -12,6 +12,7 @@ import (
 	"github.com/floyoops/flo-go/backend/internal/infra/http"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/contact"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/home"
+	"github.com/floyoops/flo-go/backend/pkg/bus"
 	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
@@ -34,8 +35,9 @@ func BuildApp() (*internal.App, error) {
 	contactMysqlRepository := infra.NewContactMysqlRepository(database)
 	mailer := provideMailer(configConfig)
 	email := provideContactFromEmail(configConfig)
-	handler := send_a_new_message.NewHandler(contactMysqlRepository, mailer, email)
-	contactController := contact.NewContactController(handler)
+	sendANewMessageCommandHandler := send_a_new_message.NewHandler(contactMysqlRepository, mailer, email)
+	commandBus := provideCommandBus(sendANewMessageCommandHandler)
+	contactController := contact.NewContactController(commandBus)
 	v := http.NewRoutes(homeController, contactController)
 	serverFactory := provideServerFactory(configConfig, v)
 	zapLogger := logger.NewZapLogger()
@@ -71,7 +73,14 @@ func provideApp(serverFactory *http.ServerFactory, logger2 logger.Logger, config
 	return app
 }
 
+func provideCommandBus(handler *send_a_new_message.SendANewMessageCommandHandler) *bus.CommandBus {
+	b := bus.NewCommandBus()
+	b.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, handler)
+	return b
+}
+
 var (
 	databaseWiring = wire.NewSet(infra.NewContactMysqlRepository, wire.Bind(new(repository.ContactRepository), new(*infra.ContactMysqlRepository)))
 	loggerWiring   = wire.NewSet(logger.NewZapLogger, wire.Bind(new(logger.Logger), new(*logger.ZapLogger)))
+	handlerWiring  = wire.NewSet(send_a_new_message.NewHandler)
 )

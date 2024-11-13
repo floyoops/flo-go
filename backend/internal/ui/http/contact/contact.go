@@ -3,6 +3,7 @@ package contact
 import (
 	"github.com/floyoops/flo-go/backend/internal/ui/http/contact/dto"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/contact/view"
+	"github.com/floyoops/flo-go/backend/pkg/bus"
 	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/backend/pkg/core"
@@ -19,11 +20,11 @@ type ContactController interface {
 }
 
 type contactController struct {
-	sendNewMessageCommandHandler *send_a_new_message.Handler
+	commandBus *bus.CommandBus
 }
 
-func NewContactController(sendNewMessageCommandHandler *send_a_new_message.Handler) ContactController {
-	return &contactController{sendNewMessageCommandHandler: sendNewMessageCommandHandler}
+func NewContactController(commandBus *bus.CommandBus) ContactController {
+	return &contactController{commandBus: commandBus}
 }
 
 func (ctl *contactController) GetContact(c echo.Context) error {
@@ -47,11 +48,11 @@ func (ctl *contactController) PostContact(c echo.Context) error {
 		log.Errorf(err.Error())
 	}
 
-	err = ctl.sendNewMessageCommandHandler.Handle(send_a_new_message.Command{
-		Name:    contactDto.Name,
-		Email:   email,
-		Message: contactDto.Message,
-	})
+	err = ctl.commandBus.Dispatch(send_a_new_message.NewSendANewMessageCommand(
+		contactDto.Name,
+		email,
+		contactDto.Message,
+	))
 
 	if err != nil {
 		return err
