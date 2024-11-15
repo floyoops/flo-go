@@ -8,21 +8,21 @@ type Command interface {
 	Identifier() CommandIdentifier
 }
 
-type Handler interface {
+type CommandHandler interface {
 	Handle(Command) error
 }
 
 type CommandBus struct {
-	handlers map[CommandIdentifier]Handler
+	handlers map[CommandIdentifier]CommandHandler
 }
 
 func NewCommandBus() *CommandBus {
 	return &CommandBus{
-		handlers: make(map[CommandIdentifier]Handler),
+		handlers: make(map[CommandIdentifier]CommandHandler),
 	}
 }
 
-func (cb *CommandBus) RegisterHandler(command Command, handler Handler) {
+func (cb *CommandBus) RegisterHandler(command Command, handler CommandHandler) {
 	cb.handlers[command.Identifier()] = handler
 }
 
