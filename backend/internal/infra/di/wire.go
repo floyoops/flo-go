@@ -10,6 +10,7 @@ import (
 	"github.com/floyoops/flo-go/backend/internal/ui/http/contact"
 	"github.com/floyoops/flo-go/backend/internal/ui/http/home"
 	"github.com/floyoops/flo-go/backend/pkg/bus"
+	"github.com/floyoops/flo-go/backend/pkg/bus/middleware"
 	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
@@ -49,6 +50,7 @@ func provideApp(serverFactory *http.ServerFactory, logger logger.Logger, config 
 
 func provideCommandBus(handler *send_a_new_message.SendANewMessageCommandHandler) *bus.CommandBus {
 	b := bus.NewCommandBus()
+	b.Use(middleware.LoggingMiddleware(logger.NewZapLogger()))
 	b.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, handler)
 	return b
 }
