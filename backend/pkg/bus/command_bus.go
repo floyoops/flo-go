@@ -39,7 +39,6 @@ func (cb *CommandBus) Dispatch(command Command) error {
 	handler, ok := cb.handlers[command.Identifier()]
 	if !ok {
 		return errors.New("no handler registered for this command")
-
 	}
 
 	// Apply middlewares

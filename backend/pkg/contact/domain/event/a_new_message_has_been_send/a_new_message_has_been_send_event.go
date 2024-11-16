@@ -1,4 +1,4 @@
-package event
+package a_new_message_has_been_send
 
 import (
 	"github.com/floyoops/flo-go/backend/pkg/bus"

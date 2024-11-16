@@ -15,6 +15,7 @@ import (
 	"github.com/floyoops/flo-go/backend/pkg/bus"
 	"github.com/floyoops/flo-go/backend/pkg/bus/middleware"
 	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/event/a_new_message_has_been_send"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
@@ -34,10 +35,11 @@ func BuildApp() (*internal.App, error) {
 	homeController := home.NewHomeController()
 	database := provideDatabase(configConfig)
 	contactMysqlRepository := infra.NewContactMysqlRepository(database)
+	sendANewMessageCommandHandler := send_a_new_message.NewHandler(contactMysqlRepository)
 	mailer := provideMailer(configConfig)
 	email := provideContactFromEmail(configConfig)
-	sendANewMessageCommandHandler := send_a_new_message.NewHandler(contactMysqlRepository, mailer, email)
-	commandBus := provideCommandBus(sendANewMessageCommandHandler)
+	aNewMessageHasBeenSendEventHandler := a_new_message_has_been_send.NewHandler(mailer, email)
+	commandBus := provideCommandBus(sendANewMessageCommandHandler, aNewMessageHasBeenSendEventHandler)
 	contactController := contact.NewContactController(commandBus)
 	v := http.NewRoutes(homeController, contactController)
 	serverFactory := provideServerFactory(configConfig, v)
@@ -74,17 +76,20 @@ func provideApp(serverFactory *http.ServerFactory, logger2 logger.Logger, config
 	return app
 }
 
-func provideCommandBus(handler *send_a_new_message.SendANewMessageCommandHandler) *bus.CommandBus {
+func provideCommandBus(
+	SendANewMessageCommandHandler *send_a_new_message.SendANewMessageCommandHandler,
+	ANewMessageHasBeenSendEventHandler *a_new_message_has_been_send.ANewMessageHasBeenSendEventHandler,
+) *bus.CommandBus {
 	eventBus := bus.NewEventBus()
+	eventBus.RegisterHandler(&a_new_message_has_been_send.ANewMessageHasBeenSendEvent{}, ANewMessageHasBeenSendEventHandler)
 
 	commandBus := bus.NewCommandBus(eventBus)
 	commandBus.Use(middleware.LoggingMiddleware(logger.NewZapLogger()))
-	commandBus.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, handler)
+	commandBus.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, SendANewMessageCommandHandler)
 	return commandBus
 }
 
 var (
 	databaseWiring = wire.NewSet(infra.NewContactMysqlRepository, wire.Bind(new(repository.ContactRepository), new(*infra.ContactMysqlRepository)))
 	loggerWiring   = wire.NewSet(logger.NewZapLogger, wire.Bind(new(logger.Logger), new(*logger.ZapLogger)))
-	handlerWiring  = wire.NewSet(send_a_new_message.NewHandler)
 )

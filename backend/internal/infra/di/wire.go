@@ -12,6 +12,7 @@ import (
 	"github.com/floyoops/flo-go/backend/pkg/bus"
 	"github.com/floyoops/flo-go/backend/pkg/bus/middleware"
 	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/event/a_new_message_has_been_send"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
@@ -48,12 +49,16 @@ func provideApp(serverFactory *http.ServerFactory, logger logger.Logger, config 
 	return app
 }
 
-func provideCommandBus(handler *send_a_new_message.SendANewMessageCommandHandler) *bus.CommandBus {
+func provideCommandBus(
+	SendANewMessageCommandHandler *send_a_new_message.SendANewMessageCommandHandler,
+	ANewMessageHasBeenSendEventHandler *a_new_message_has_been_send.ANewMessageHasBeenSendEventHandler,
+) *bus.CommandBus {
 	eventBus := bus.NewEventBus()
+	eventBus.RegisterHandler(&a_new_message_has_been_send.ANewMessageHasBeenSendEvent{}, ANewMessageHasBeenSendEventHandler)
 
 	commandBus := bus.NewCommandBus(eventBus)
 	commandBus.Use(middleware.LoggingMiddleware(logger.NewZapLogger()))
-	commandBus.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, handler)
+	commandBus.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, SendANewMessageCommandHandler)
 	return commandBus
 }
 
@@ -65,9 +70,6 @@ var (
 	loggerWiring = wire.NewSet(
 		logger.NewZapLogger,
 		wire.Bind(new(logger.Logger), new(*logger.ZapLogger)),
-	)
-	handlerWiring = wire.NewSet(
-		send_a_new_message.NewHandler,
 	)
 )
 
@@ -81,6 +83,7 @@ func BuildApp() (*internal.App, error) {
 		provideMailer,
 		provideContactFromEmail,
 		send_a_new_message.NewHandler,
+		a_new_message_has_been_send.NewHandler,
 		provideCommandBus,
 		home.NewHomeController,
 		contact.NewContactController,

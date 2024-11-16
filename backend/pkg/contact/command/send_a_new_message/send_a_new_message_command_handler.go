@@ -2,10 +2,8 @@ package send_a_new_message
 
 import (
 	"errors"
-	"fmt"
 	"github.com/floyoops/flo-go/backend/pkg/bus"
-	"github.com/floyoops/flo-go/backend/pkg/contact/domain/event"
-	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/event/a_new_message_has_been_send"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/backend/pkg/contact/repository"
 	"github.com/floyoops/flo-go/backend/pkg/core"
@@ -13,12 +11,10 @@ import (
 
 type SendANewMessageCommandHandler struct {
 	contactRepository repository.ContactRepository
-	mailer            mailer.Mailer
-	contactEmailApp   *model.Email
 }
 
-func NewHandler(contactRepository repository.ContactRepository, mailer mailer.Mailer, contactFromEmail *model.Email) *SendANewMessageCommandHandler {
-	return &SendANewMessageCommandHandler{contactRepository, mailer, contactFromEmail}
+func NewHandler(contactRepository repository.ContactRepository) *SendANewMessageCommandHandler {
+	return &SendANewMessageCommandHandler{contactRepository}
 }
 
 func (h SendANewMessageCommandHandler) Handle(command bus.Command) ([]bus.Event, error) {
@@ -38,13 +34,5 @@ func (h SendANewMessageCommandHandler) Handle(command bus.Command) ([]bus.Event,
 		return nil, errRepo
 	}
 
-	to := model.NewEmailList([]*model.Email{h.contactEmailApp})
-	subject := "App flo-go new message from " + contact.Name
-	body := fmt.Sprintf("name: %s\nemail: %s\nmessage: %s", contact.Name, contact.Email, contact.Message)
-	err := h.mailer.Send(h.contactEmailApp, to, subject, body)
-	if err != nil {
-		return nil, err
-	}
-
-	return []bus.Event{event.NewANewMessageHasBeenSendEvent(cmd.Name, cmd.Email, cmd.Message)}, nil
+	return []bus.Event{a_new_message_has_been_send.NewANewMessageHasBeenSendEvent(cmd.Name, cmd.Email, cmd.Message)}, nil
 }

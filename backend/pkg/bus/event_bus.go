@@ -29,7 +29,7 @@ func NewEventBus() *EventBus {
 	}
 }
 
-func (eb *EventBus) Register(event Event, handler EventHandler) {
+func (eb *EventBus) RegisterHandler(event Event, handler EventHandler) {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
 	eb.handlers[event.Identifier()] = append(eb.handlers[event.Identifier()], handler)
