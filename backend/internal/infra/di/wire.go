@@ -53,7 +53,7 @@ func provideCommandBus(
 	SendANewMessageCommandHandler *send_a_new_message.SendANewMessageCommandHandler,
 	ANewMessageHasBeenSendEventHandler *a_new_message_has_been_send.ANewMessageHasBeenSendEventHandler,
 ) *bus.CommandBus {
-	eventBus := bus.NewEventBus()
+	eventBus := bus.NewSimpleEventBus()
 	eventBus.RegisterHandler(&a_new_message_has_been_send.ANewMessageHasBeenSendEvent{}, ANewMessageHasBeenSendEventHandler)
 
 	commandBus := bus.NewCommandBus(eventBus)

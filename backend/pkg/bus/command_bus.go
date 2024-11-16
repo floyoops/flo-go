@@ -17,10 +17,10 @@ type CommandMiddleware func(next CommandHandler) CommandHandler
 type CommandBus struct {
 	handlers    map[CommandIdentifier]CommandHandler
 	middlewares []CommandMiddleware
-	eventBus    *EventBus
+	eventBus    EventBus
 }
 
-func NewCommandBus(eventBus *EventBus) *CommandBus {
+func NewCommandBus(eventBus EventBus) *CommandBus {
 	return &CommandBus{
 		handlers: make(map[CommandIdentifier]CommandHandler),
 		eventBus: eventBus,
