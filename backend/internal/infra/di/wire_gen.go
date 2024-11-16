@@ -75,10 +75,12 @@ func provideApp(serverFactory *http.ServerFactory, logger2 logger.Logger, config
 }
 
 func provideCommandBus(handler *send_a_new_message.SendANewMessageCommandHandler) *bus.CommandBus {
-	b := bus.NewCommandBus()
-	b.Use(middleware.LoggingMiddleware(logger.NewZapLogger()))
-	b.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, handler)
-	return b
+	eventBus := bus.NewEventBus()
+
+	commandBus := bus.NewCommandBus(eventBus)
+	commandBus.Use(middleware.LoggingMiddleware(logger.NewZapLogger()))
+	commandBus.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, handler)
+	return commandBus
 }
 
 var (

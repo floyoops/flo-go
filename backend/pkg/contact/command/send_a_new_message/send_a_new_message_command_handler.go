@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/floyoops/flo-go/backend/pkg/bus"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/event"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/backend/pkg/contact/repository"
@@ -20,10 +21,10 @@ func NewHandler(contactRepository repository.ContactRepository, mailer mailer.Ma
 	return &SendANewMessageCommandHandler{contactRepository, mailer, contactFromEmail}
 }
 
-func (h SendANewMessageCommandHandler) Handle(command bus.Command) error {
+func (h SendANewMessageCommandHandler) Handle(command bus.Command) ([]bus.Event, error) {
 	cmd, ok := command.(*SendANewMessageCommand)
 	if !ok {
-		return errors.New("invalid command type for SendANewMessageCommandHandler")
+		return nil, errors.New("invalid command type for SendANewMessageCommandHandler")
 	}
 	contact := model.NewContact(
 		core.NewIdentifier(),
@@ -34,7 +35,7 @@ func (h SendANewMessageCommandHandler) Handle(command bus.Command) error {
 
 	errRepo := h.contactRepository.Create(contact)
 	if errRepo != nil {
-		return errRepo
+		return nil, errRepo
 	}
 
 	to := model.NewEmailList([]*model.Email{h.contactEmailApp})
@@ -42,8 +43,8 @@ func (h SendANewMessageCommandHandler) Handle(command bus.Command) error {
 	body := fmt.Sprintf("name: %s\nemail: %s\nmessage: %s", contact.Name, contact.Email, contact.Message)
 	err := h.mailer.Send(h.contactEmailApp, to, subject, body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return []bus.Event{event.NewANewMessageHasBeenSendEvent(cmd.Name, cmd.Email, cmd.Message)}, nil
 }

@@ -7,13 +7,18 @@ import (
 
 func LoggingMiddleware(logger logger.Logger) bus.CommandMiddleware {
 	return func(next bus.CommandHandler) bus.CommandHandler {
-		return bus.CommandHandlerFunc(func(command bus.Command) error {
-			logger.Info("Handling command: %T", command)
-			err := next.Handle(command)
+		return bus.CommandHandlerFunc(func(command bus.Command) ([]bus.Event, error) {
+			logger.Infof("Handling command %s", command.Identifier().String())
+			events, err := next.Handle(command)
 			if err != nil {
-				logger.Error("Error handling command: %s", err)
+				logger.Errorf("Error handling command: %s", err)
 			}
-			return err
+
+			for _, event := range events {
+				logger.Infof("Generated event: %s by command %s", event.Identifier().String(), command.Identifier().String())
+			}
+
+			return events, err
 		})
 	}
 }
