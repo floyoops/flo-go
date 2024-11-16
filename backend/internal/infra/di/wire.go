@@ -11,8 +11,8 @@ import (
 	"github.com/floyoops/flo-go/backend/internal/ui/http/home"
 	"github.com/floyoops/flo-go/backend/pkg/bus"
 	"github.com/floyoops/flo-go/backend/pkg/bus/middleware"
-	"github.com/floyoops/flo-go/backend/pkg/contact/command/send_a_new_message"
-	"github.com/floyoops/flo-go/backend/pkg/contact/domain/event/a_new_message_has_been_send"
+	"github.com/floyoops/flo-go/backend/pkg/contact/command"
+	"github.com/floyoops/flo-go/backend/pkg/contact/domain/event"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/mailer"
 	"github.com/floyoops/flo-go/backend/pkg/contact/domain/model"
 	"github.com/floyoops/flo-go/backend/pkg/contact/infra"
@@ -50,15 +50,15 @@ func provideApp(serverFactory *http.ServerFactory, logger logger.Logger, config 
 }
 
 func provideCommandBus(
-	SendANewMessageCommandHandler *send_a_new_message.SendANewMessageCommandHandler,
-	ANewMessageHasBeenSendEventHandler *a_new_message_has_been_send.ANewMessageHasBeenSendEventHandler,
+	SendANewMessageCommandHandler *command.SendANewMessageCommandHandler,
+	ANewMessageHasBeenSendEventHandler *event.ANewMessageHasBeenSendEventHandler,
 ) *bus.CommandBus {
 	eventBus := bus.NewSimpleEventBus()
-	eventBus.RegisterHandler(&a_new_message_has_been_send.ANewMessageHasBeenSendEvent{}, ANewMessageHasBeenSendEventHandler)
+	eventBus.RegisterHandler(&event.ANewMessageHasBeenSendEvent{}, ANewMessageHasBeenSendEventHandler)
 
 	commandBus := bus.NewCommandBus(eventBus)
 	commandBus.Use(middleware.LoggingMiddleware(logger.NewZapLogger()))
-	commandBus.RegisterHandler(&send_a_new_message.SendANewMessageCommand{}, SendANewMessageCommandHandler)
+	commandBus.RegisterHandler(&command.SendANewMessageCommand{}, SendANewMessageCommandHandler)
 	return commandBus
 }
 
@@ -82,8 +82,8 @@ func BuildApp() (*internal.App, error) {
 		provideDatabase,
 		provideMailer,
 		provideContactFromEmail,
-		send_a_new_message.NewHandler,
-		a_new_message_has_been_send.NewHandler,
+		command.NewSendANewMessageCommandHandler,
+		event.NewMessageHasBeenSendEventHandler,
 		provideCommandBus,
 		home.NewHomeController,
 		contact.NewContactController,
